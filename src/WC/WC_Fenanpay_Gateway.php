@@ -23,7 +23,7 @@ class WC_FenanPay_Gateway extends WC_Payment_Gateway {
 
     public function __construct() {
         $this->id                 = 'fenanpay';
-        $this->icon               = apply_filters( 'fenanpay_icon', plugins_url( '../../assets/fenanpay.png', __FILE__ ) );
+        $this->icon               = apply_filters( 'fenanpay_icon', plugins_url( 'src/assets/fenanpay1.png', __FILE__ ) );
         $this->has_fields         = false;
         $this->method_title       = __( 'FenanPay', 'fenanpay' );
         $this->method_description = __( 'Pay using FenanPay (external payment flow).', 'fenanpay' );
@@ -35,7 +35,7 @@ class WC_FenanPay_Gateway extends WC_Payment_Gateway {
         // Map settings to properties
         $this->title        = $this->get_option( 'title', 'FenanPay' );
         $this->description  = $this->get_option( 'description', '' );
-        $this->api_base     = rtrim( $this->get_option( 'api_base', 'https://api.fenanpay.example' ), '/' );
+        $this->api_base     = rtrim( $this->get_option( 'api_base', 'https://api.fenanpay.com' ), '/' );
         $this->api_key      = $this->get_option( 'api_key' );
         $this->api_secret   = $this->get_option( 'api_secret' );
         $this->merchant_id  = $this->get_option( 'merchant_id' );
@@ -75,7 +75,7 @@ class WC_FenanPay_Gateway extends WC_Payment_Gateway {
                 'title' => __( 'API Base URL', 'fenanpay' ),
                 'type'  => 'text',
                 'description' => __( 'FenanPay API base url (no trailing slash).', 'fenanpay' ),
-                'default' => 'https://api.fenanpay.example',
+                'default' => 'https://api.fenanpay.com',
             ),
             'api_key' => array(
                 'title' => __( 'API Key', 'fenanpay' ),
@@ -120,7 +120,7 @@ class WC_FenanPay_Gateway extends WC_Payment_Gateway {
         // Build payload (adjust fields to FenanPay API)
         $body = array(
             'merchantId' => $this->merchant_id,
-            'orderId'    => (string) $order_id . bin2hex( random_bytes( 4 ) ), // unique id
+            'orderId'    => (string) $order_id . bin2hex( random_bytes( 4 ) ),
             'amount'     => number_format( (float) $order->get_total(), 2, '.', '' ),
             'currency'   => $order->get_currency(),
             'customer'   => array(
@@ -133,7 +133,7 @@ class WC_FenanPay_Gateway extends WC_Payment_Gateway {
             'notifyUrl'  => $this->notify_url,
         );
 
-        $endpoint = $this->api_base . '/v1/payments/initiate';
+        $endpoint = $this->api_base . '/v1/api/v1/payment/intent';
 
         $auth = base64_encode( $this->api_key . ':' . $this->api_secret );
 
@@ -158,7 +158,6 @@ class WC_FenanPay_Gateway extends WC_Payment_Gateway {
         $data = json_decode( $body_raw, true );
 
         if ( $code >= 200 && $code < 300 && ! empty( $data['url'] ) ) {
-            // Empty cart and redirect to payment provider
             WC()->cart->empty_cart();
 
             return array(
@@ -212,7 +211,6 @@ class WC_FenanPay_Gateway extends WC_Payment_Gateway {
             exit;
         }
 
-        // Example payload expectations: { orderId: "...", status: "COMPLETED", amount: "..." }
         $order_ref = isset( $data['orderId'] ) ? $data['orderId'] : '';
         // attempt to extract original order id (assuming we prefixed order id earlier)
         $order_id = intval( preg_replace( '/[^0-9].*/', '', $order_ref ) );
