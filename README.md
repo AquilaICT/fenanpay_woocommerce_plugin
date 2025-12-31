@@ -5,7 +5,7 @@
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/gpl-2.0)
 
 **Version:** 0.1.0  
-**Contributors:** FenanPay Development Team  
+**Developer:** Bereket ([bereket-7](https://github.com/bereket-7))  
 **Requires:** WordPress 5.0+, WooCommerce 4.0+, PHP 7.4+  
 **Tested up to:** WordPress 6.4, WooCommerce 8.0  
 **License:** GPL v2 or later  
