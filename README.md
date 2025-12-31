@@ -1,4 +1,4 @@
-# FenanPay WooCommerce Payment Gateway
+# FenanPay WooCommerce Plugin
 
 [![WordPress Plugin](https://img.shields.io/badge/WordPress-Plugin-blue.svg)](https://wordpress.org/plugins/)
 [![WooCommerce Compatible](https://img.shields.io/badge/WooCommerce-Compatible-96588a.svg)](https://woocommerce.com/)
@@ -53,15 +53,15 @@ The FenanPay WooCommerce Gateway provides seamless integration between your WooC
 
 ### System Requirements
 
-| Component | Minimum Version | Recommended |
-|-----------|----------------|-------------|
-| WordPress | 5.0 | 6.0+ |
-| WooCommerce | 4.0 | 7.0+ |
-| PHP | 7.4 | 8.1+ |
-| MySQL | 5.6 | 8.0+ |
-| SSL Certificate | Required for production | |
-| cURL Extension | Required | |
-| JSON Extension | Required | |
+| Component       | Minimum Version         | Recommended |
+| --------------- | ----------------------- | ----------- |
+| WordPress       | 5.0                     | 6.0+        |
+| WooCommerce     | 4.0                     | 7.0+        |
+| PHP             | 7.4                     | 8.1+        |
+| MySQL           | 5.6                     | 8.0+        |
+| SSL Certificate | Required for production |             |
+| cURL Extension  | Required                |             |
+| JSON Extension  | Required                |             |
 
 ## Configuration Guide
 
@@ -74,11 +74,11 @@ The FenanPay WooCommerce Gateway provides seamless integration between your WooC
 
 ### 2. API Configuration
 
-| Setting | Description | Required |
-|---------|-------------|----------|
-| **API Key** | Your FenanPay API authentication key | ✅ |
-| **Webhook Secret** | HMAC signature verification key | ⚠️ Recommended |
-| **Test Mode** | Enable sandbox environment | 🧪 Development |
+| Setting            | Description                          | Required       |
+| ------------------ | ------------------------------------ | -------------- |
+| **API Key**        | Your FenanPay API authentication key | ✅             |
+| **Webhook Secret** | HMAC signature verification key      | ⚠️ Recommended |
+| **Test Mode**      | Enable sandbox environment           | 🧪 Development |
 
 ### 3. Payment Settings
 
@@ -90,6 +90,7 @@ The FenanPay WooCommerce Gateway provides seamless integration between your WooC
 ### 4. Development & Testing
 
 **Sandbox Configuration:**
+
 - Enable **Test Mode** in plugin settings
 - Use sandbox API credentials from FenanPay dashboard
 - Test endpoint: `https://api.fenanpay.com/api/v1/payment/sandbox/intent`
@@ -102,16 +103,19 @@ Webhooks enable real-time payment status synchronization between FenanPay and yo
 ### Setup Instructions
 
 1. **Access FenanPay Dashboard**
+
    - Log in to your FenanPay merchant account
    - Navigate to **Developer** → **Webhooks**
 
 2. **Configure Webhook Endpoint**
+
    ```
    Webhook URL: https://yoursite.com/?wc-api=wc_fenanpay
    Alternative: https://yoursite.com/fenanpay-webhook
    ```
 
 3. **Security Configuration**
+
    - **Authentication Method**: HMAC-SHA256
    - **Secret Key**: Copy from plugin settings
    - **Header Name**: `X-FenanPay-Signature`
@@ -136,6 +140,7 @@ $is_valid = hash_equals($computed_signature, $received_signature);
 ### API Integration Details
 
 **Payment Intent Flow:**
+
 1. Customer initiates checkout
 2. Plugin creates payment intent via FenanPay API
 3. Customer redirects to FenanPay checkout
@@ -144,6 +149,7 @@ $is_valid = hash_equals($computed_signature, $received_signature);
 6. Customer returns to store confirmation page
 
 **Supported Payment Methods:**
+
 - Credit/Debit Cards (Visa, Mastercard)
 - Mobile Money (M-Birr, HelloCash)
 - Bank Transfers
@@ -151,12 +157,12 @@ $is_valid = hash_equals($computed_signature, $received_signature);
 
 ### Order Status Management
 
-| FenanPay Status | WooCommerce Status | Action |
-|----------------|-------------------|--------|
-| `SUCCESS/PAID/COMPLETED` | `processing` | Payment Complete |
-| `FAILED` | `failed` | Order Failed |
-| `EXPIRED` | `cancelled` | Session Timeout |
-| `PENDING` | `pending` | Awaiting Payment |
+| FenanPay Status          | WooCommerce Status | Action           |
+| ------------------------ | ------------------ | ---------------- |
+| `SUCCESS/PAID/COMPLETED` | `processing`       | Payment Complete |
+| `FAILED`                 | `failed`           | Order Failed     |
+| `EXPIRED`                | `cancelled`        | Session Timeout  |
+| `PENDING`                | `pending`          | Awaiting Payment |
 
 ### Frequently Asked Questions
 
@@ -216,7 +222,7 @@ wp plugin activate fenanpay-woocommerce
 ### Code Standards
 
 - **PHP**: WordPress Coding Standards
-- **JavaScript**: WordPress JavaScript Standards  
+- **JavaScript**: WordPress JavaScript Standards
 - **CSS**: WordPress CSS Standards
 - **Documentation**: PHPDoc standards
 
@@ -235,6 +241,7 @@ composer lint
 ### Version 0.1.0 (Initial Release)
 
 **Features:**
+
 - ✅ Payment Intent API integration
 - ✅ Webhook support with HMAC verification
 - ✅ Sandbox/Production environment switching
@@ -244,6 +251,7 @@ composer lint
 - ✅ Security best practices implementation
 
 **Technical Implementation:**
+
 - Modern PHP namespaced architecture
 - RESTful API integration
 - Secure webhook handling
@@ -272,4 +280,4 @@ the Free Software Foundation; either version 2 of the License, or
 
 ---
 
-**Disclaimer**: *FenanPay and associated trademarks are property of FenanPay. This plugin is developed to integrate with FenanPay services and follows their API specifications.*
+**Disclaimer**: _FenanPay and associated trademarks are property of FenanPay. This plugin is developed to integrate with FenanPay services and follows their API specifications._
