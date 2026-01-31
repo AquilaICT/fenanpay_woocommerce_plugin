@@ -18,6 +18,8 @@ class WC_FenanPay_Gateway extends WC_Payment_Gateway {
     protected $api_key;
     protected $webhook_secret;
     protected $currency;
+    protected $custom_return_url;
+    protected $custom_webhook_url;
     protected $notify_url;
 
     public function __construct() {
@@ -32,15 +34,17 @@ class WC_FenanPay_Gateway extends WC_Payment_Gateway {
         $this->init_settings();
 
         // Map settings to properties
-        $this->title          = $this->get_option( 'title', 'FenanPay' );
-        $this->description    = $this->get_option( 'description', '' );
-        $this->testmode       = 'yes' === $this->get_option( 'testmode' );
-        $this->api_key        = $this->get_option( 'api_key' );
-        $this->webhook_secret = $this->get_option( 'webhook_secret' );
-        $this->currency       = $this->get_option( 'currency', 'ETB' );
+        $this->title              = $this->get_option( 'title', 'FenanPay' );
+        $this->description        = $this->get_option( 'description', '' );
+        $this->testmode           = 'yes' === $this->get_option( 'testmode' );
+        $this->api_key            = $this->get_option( 'api_key' );
+        $this->webhook_secret     = $this->get_option( 'webhook_secret' );
+        $this->currency           = $this->get_option( 'currency', 'ETB' );
+        $this->custom_return_url  = $this->get_option( 'custom_return_url' );
+        $this->custom_webhook_url = $this->get_option( 'custom_webhook_url' );
 
-        // notify URL (webhook) for FenanPay to call
-        $this->notify_url = home_url( '/?wc-api=wc_fenanpay' );
+        // notify URL (webhook) - use custom or default
+        $this->notify_url = ! empty( $this->custom_webhook_url ) ? $this->custom_webhook_url : home_url( '/?wc-api=wc_fenanpay' );
 
         // Hooks
         add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
@@ -96,10 +100,22 @@ class WC_FenanPay_Gateway extends WC_Payment_Gateway {
                     'USD' => __( 'US Dollar (USD)', 'fenanpay' ),
                 ),
             ),
+            'custom_return_url' => array(
+                'title'       => __( 'Return URL (optional)', 'fenanpay' ),
+                'type'        => 'url',
+                'description' => __( 'URL where customers return after payment. Leave empty for default WooCommerce thank you page.', 'fenanpay' ),
+                'placeholder' => home_url( '/checkout/order-received/' ),
+            ),
+            'custom_webhook_url' => array(
+                'title'       => __( 'Webhook URL (optional)', 'fenanpay' ),
+                'type'        => 'url',
+                'description' => __( 'Custom webhook endpoint URL. Leave empty to use default.', 'fenanpay' ),
+                'placeholder' => home_url( '/?wc-api=wc_fenanpay' ),
+            ),
             'webhook_info' => array(
-                'title'       => __( 'Webhook Endpoint', 'fenanpay' ),
+                'title'       => __( 'Current Webhook Endpoint', 'fenanpay' ),
                 'type'        => 'title',
-                'description' => sprintf( __( 'Set this URL as your webhook/notification endpoint in FenanPay dashboard: <code>%s</code>', 'fenanpay' ), $this->notify_url ),
+                'description' => sprintf( __( 'Current webhook endpoint: <code>%s</code><br>Set this URL in your FenanPay dashboard.', 'fenanpay' ), $this->notify_url ),
             ),
         );
     }
@@ -137,7 +153,7 @@ class WC_FenanPay_Gateway extends WC_Payment_Gateway {
             'currency'                 => $this->currency, // Use plugin currency setting
             'paymentIntentUniqueId'    => $unique_id,
             'methods'                  => array(), // Empty array = all enabled methods
-            'returnUrl'                => $this->get_return_url( $order ),
+            'returnUrl'                => ! empty( $this->custom_return_url ) ? $this->custom_return_url : $this->get_return_url( $order ),
             'callbackUrl'              => $this->notify_url,
             'expireIn'                 => 3600, // 1 hour expiration
             'commissionPaidByCustomer' => false,
