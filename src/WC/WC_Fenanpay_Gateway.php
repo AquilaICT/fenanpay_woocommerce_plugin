@@ -17,6 +17,7 @@ class WC_FenanPay_Gateway extends WC_Payment_Gateway {
     protected $testmode;
     protected $api_key;
     protected $webhook_secret;
+    protected $currency;
     protected $notify_url;
 
     public function __construct() {
@@ -36,6 +37,7 @@ class WC_FenanPay_Gateway extends WC_Payment_Gateway {
         $this->testmode       = 'yes' === $this->get_option( 'testmode' );
         $this->api_key        = $this->get_option( 'api_key' );
         $this->webhook_secret = $this->get_option( 'webhook_secret' );
+        $this->currency       = $this->get_option( 'currency', 'ETB' );
 
         // notify URL (webhook) for FenanPay to call
         $this->notify_url = home_url( '/?wc-api=wc_fenanpay' );
@@ -84,6 +86,16 @@ class WC_FenanPay_Gateway extends WC_Payment_Gateway {
                 'type'        => 'password',
                 'description' => __( 'Used to verify webhook signatures if provided.', 'fenanpay' ),
             ),
+            'currency' => array(
+                'title'       => __( 'Currency', 'fenanpay' ),
+                'type'        => 'select',
+                'description' => __( 'Currency for FenanPay transactions.', 'fenanpay' ),
+                'default'     => 'ETB',
+                'options'     => array(
+                    'ETB' => __( 'Ethiopian Birr (ETB)', 'fenanpay' ),
+                    'USD' => __( 'US Dollar (USD)', 'fenanpay' ),
+                ),
+            ),
             'webhook_info' => array(
                 'title'       => __( 'Webhook Endpoint', 'fenanpay' ),
                 'type'        => 'title',
@@ -122,7 +134,7 @@ class WC_FenanPay_Gateway extends WC_Payment_Gateway {
         // Build Payload
         $body = array(
             'amount'                   => (float) $order->get_total(),
-            'currency'                 => $order->get_currency(), // 'ETB' or 'USD'
+            'currency'                 => $this->currency, // Use plugin currency setting
             'paymentIntentUniqueId'    => $unique_id,
             'methods'                  => array(), // Empty array = all enabled methods
             'returnUrl'                => $this->get_return_url( $order ),
