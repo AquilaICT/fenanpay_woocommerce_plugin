@@ -37,7 +37,8 @@ function fenanpay_init_gateway() {
 
     // If composer wasn't run and autoloader missing, include the gateway file manually.
     if ( ! class_exists( 'FenanPay\\FenanPay\\WC\\WC_FenanPay_Gateway' ) ) {
-        $maybe = __DIR__ . '/src/WC/WC_FenanPay_Gateway.php';
+        // On case-sensitive filesystems (Linux), the filename must match exactly.
+        $maybe = __DIR__ . '/src/WC/WC_Fenanpay_Gateway.php';
         if ( file_exists( $maybe ) ) {
             require_once $maybe;
         }
